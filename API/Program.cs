@@ -1,9 +1,20 @@
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+    policy =>{
+        policy.WithOrigins("https://localhost:4200");
+    });
+});
+
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(opt => 
@@ -14,8 +25,9 @@ builder.Services.AddDbContext<DataContext>(opt =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 
